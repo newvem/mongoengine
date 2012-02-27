@@ -1,4 +1,4 @@
-from pymongo import Connection
+from niapi.dbi.mongoapi import get_connection
 import multiprocessing
 import threading
 
@@ -30,7 +30,7 @@ def _get_connection(reconnect=False):
     # Connect to the database if not already connected
     if _connection.get(identity) is None or reconnect:
         try:
-            _connection[identity] = Connection(**_connection_settings)
+            _connection[identity] = get_connection(preference='primary')
         except Exception, e:
             raise ConnectionError("Cannot connect to the database:\n%s" % e)
     return _connection[identity]
