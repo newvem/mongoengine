@@ -35,10 +35,12 @@ CLASSIFIERS = [
 
 setup(name='mongoengine',
       version=VERSION,
-      packages=find_packages(),
+      packages=find_packages(exclude=('tests',)),
       author='Harry Marr',
       author_email='harry.marr@{nospam}gmail.com',
-      url='http://hmarr.com/mongoengine/',
+      maintainer="Ross Lawley",
+      maintainer_email="ross.lawley@{nospam}gmail.com",
+      url='http://mongoengine.org/',
       license='MIT',
       include_package_data=True,
       description=DESCRIPTION,
@@ -46,6 +48,5 @@ setup(name='mongoengine',
       platforms=['any'],
       classifiers=CLASSIFIERS,
       install_requires=['pymongo'],
-      test_suite='tests',
-      tests_require=['blinker', 'django==1.3']
+      tests_require=['nose', 'coverage', 'blinker', 'django>=1.3', 'PIL']
 )

@@ -2,15 +2,215 @@
 Changelog
 =========
 
+Changes in 0.6.20
+=================
+- Added support for distinct and db_alias (MongoEngine/mongoengine#59)
+- Improved support for chained querysets when constraining the same fields (hmarr/mongoengine#554)
+- Fixed BinaryField lookup re (MongoEngine/mongoengine#48)
+
+Changes in 0.6.19
+=================
+
+- Added Binary support to UUID (MongoEngine/mongoengine#47)
+- Fixed MapField lookup for fields without declared lookups (MongoEngine/mongoengine#46)
+- Fixed BinaryField python value issue (MongoEngine/mongoengine#48)
+- Fixed SequenceField non numeric value lookup (MongoEngine/mongoengine#41)
+- Fixed queryset manager issue (MongoEngine/mongoengine#52)
+- Fixed FileField comparision (hmarr/mongoengine#547)
+
+Changes in 0.6.18
+=================
+- Fixed recursion loading bug in _get_changed_fields
+
+Changes in 0.6.17
+=================
+- Fixed issue with custom queryset manager expecting explict variable names
+
+Changes in 0.6.16
+=================
+- Fixed issue where db_alias wasn't inherited
+
+Changes in 0.6.15
+=================
+- Updated validation error messages
+- Added support for null / zero / false values in item_frequencies
+- Fixed cascade save edge case
+- Fixed geo index creation through reference fields
+- Added support for args / kwargs when using @queryset_manager
+- Deref list custom id fix
+
+Changes in 0.6.14
+=================
+- Fixed error dict with nested validation
+- Fixed Int/Float fields and not equals None
+- Exclude tests from installation
+- Allow tuples for index meta
+- Fixed use of str in instance checks
+- Fixed unicode support in transform update
+- Added support for add_to_set and each
+
+Changes in 0.6.13
+=================
+- Fixed EmbeddedDocument db_field validation issue
+- Fixed StringField unicode issue
+- Fixes __repr__ modifying the cursor
+
+Changes in 0.6.12
+=================
+- Fixes scalar lookups for primary_key
+- Fixes error with _delta handling DBRefs
+
+Changes in 0.6.11
+==================
+- Fixed inconsistency handling None values field attrs
+- Fixed map_field embedded db_field issue
+- Fixed .save() _delta issue with DbRefs
+- Fixed Django TestCase
+- Added cmp to Embedded Document
+- Added PULL reverse_delete_rule
+- Fixed CASCADE delete bug
+- Fixed db_field data load error
+- Fixed recursive save with FileField
+
+Changes in 0.6.10
+=================
+- Fixed basedict / baselist to return super(..)
+- Promoted BaseDynamicField to DynamicField
+
+Changes in 0.6.9
+================
+- Fixed sparse indexes on inherited docs
+- Removed FileField auto deletion, needs more work maybe 0.7
+
+Changes in 0.6.8
+================
+- Fixed FileField losing reference when no default set
+- Removed possible race condition from FileField (grid_file)
+- Added assignment to save, can now do: b = MyDoc(**kwargs).save()
+- Added support for pull operations on nested EmbeddedDocuments
+- Added support for choices with GenericReferenceFields
+- Added support for choices with GenericEmbeddedDocumentFields
+- Fixed Django 1.4 sessions first save data loss
+- FileField now automatically delete files on .delete()
+- Fix for GenericReference to_mongo method
+- Fixed connection regression
+- Updated Django User document, now allows inheritance
+
+Changes in 0.6.7
+================
+- Fixed indexing on '_id' or 'pk' or 'id'
+- Invalid data from the DB now raises a InvalidDocumentError
+- Cleaned up the Validation Error - docs and code
+- Added meta `auto_create_index` so you can disable index creation
+- Added write concern options to inserts
+- Fixed typo in meta for index options
+- Bug fix Read preference now passed correctly
+- Added support for File like objects for GridFS
+- Fix for #473 - Dereferencing abstracts
+
+Changes in 0.6.6
+================
+- Django 1.4 fixed (finally)
+- Added tests for Django
+
+Changes in 0.6.5
+================
+- More Django updates
+
+Changes in 0.6.4
+================
+
+- Refactored connection / fixed replicasetconnection
+- Bug fix for unknown connection alias error message
+- Sessions support Django 1.3 and Django 1.4
+- Minor fix for ReferenceField
+
+Changes in 0.6.3
+================
+- Updated sessions for Django 1.4
+- Bug fix for updates where listfields contain embedded documents
+- Bug fix for collection naming and mixins
+
+Changes in 0.6.2
+================
+- Updated documentation for ReplicaSet connections
+- Hack round _types issue with SERVER-5247 - querying other arrays may also cause problems.
+
+Changes in 0.6.1
+================
+- Fix for replicaSet connections
+
+Changes in 0.6
+================
+
+- Added FutureWarning to inherited classes not declaring 'allow_inheritance' as the default will change in 0.7
+- Added support for covered indexes when inheritance is off
+- No longer always upsert on save for items with a '_id'
+- Error raised if update doesn't have an operation
+- DeReferencing is now thread safe
+- Errors raised if trying to perform a join in a query
+- Updates can now take __raw__ queries
+- Added custom 2D index declarations
+- Added replicaSet connection support
+- Updated deprecated imports from pymongo (safe for pymongo 2.2)
+- Added uri support for connections
+- Added scalar for efficiently returning partial data values (aliased to values_list)
+- Fixed limit skip bug
+- Improved Inheritance / Mixin
+- Added sharding support
+- Added pymongo 2.1 support
+- Fixed Abstract documents can now declare indexes
+- Added db_alias support to individual documents
+- Fixed GridFS documents can now be pickled
+- Added Now raises an InvalidDocumentError when declaring multiple fields with the same db_field
+- Added InvalidQueryError when calling with_id with a filter
+- Added support for DBRefs in distinct()
+- Fixed issue saving False booleans
+- Fixed issue with dynamic documents deltas
+- Added Reverse Delete Rule support to ListFields - MapFields aren't supported
+- Added customisable cascade kwarg options
+- Fixed Handle None values for non-required fields
+- Removed Document._get_subclasses() - no longer required
+- Fixed bug requiring subclasses when not actually needed
+- Fixed deletion of dynamic data
+- Added support for the $elementMatch operator
+- Added reverse option to SortedListFields
+- Fixed dereferencing - multi directional list dereferencing
+- Fixed issue creating indexes with recursive embedded documents
+- Fixed recursive lookup in _unique_with_indexes
+- Fixed passing ComplexField defaults to constructor for ReferenceFields
+- Fixed validation of DictField Int keys
+- Added optional cascade saving
+- Fixed dereferencing - max_depth now taken into account
+- Fixed document mutation saving issue
+- Fixed positional operator when replacing embedded documents
+- Added Non-Django Style choices back (you can have either)
+- Fixed __repr__ of a sliced queryset
+- Added recursive validation error of documents / complex fields
+- Fixed breaking during queryset iteration
+- Added pre and post bulk-insert signals
+- Added ImageField - requires PIL
+- Fixed Reference Fields can be None in get_or_create / queries
+- Fixed accessing pk on an embedded document
+- Fixed calling a queryset after drop_collection now recreates the collection
+- Add field name to validation exception messages
+- Added UUID field
+- Improved efficiency of .get()
+- Updated ComplexFields so if required they won't accept empty lists / dicts
+- Added spec file for rpm-based distributions
+- Fixed ListField so it doesnt accept strings
+- Added DynamicDocument and EmbeddedDynamicDocument classes for expando schemas
+
 Changes in v0.5.2
 =================
 
 - A Robust Circular reference bugfix
 
+
 Changes in v0.5.1
 =================
 
-- Circular reference bugfix
+- Fixed simple circular reference bug
 
 Changes in v0.5
 ===============

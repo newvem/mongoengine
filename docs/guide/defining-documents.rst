@@ -24,6 +24,34 @@ objects** as class attributes to the document class::
         title = StringField(max_length=200, required=True)
         date_modified = DateTimeField(default=datetime.datetime.now)
 
+Dynamic document schemas
+========================
+One of the benefits of MongoDb is dynamic schemas for a collection, whilst data
+should be planned and organised (after all explicit is better than implicit!)
+there are scenarios where having dynamic / expando style documents is desirable.
+
+:class:`~mongoengine.DynamicDocument` documents work in the same way as
+:class:`~mongoengine.Document` but any data / attributes set to them will also
+be saved ::
+
+    from mongoengine import *
+
+    class Page(DynamicDocument):
+        title = StringField(max_length=200, required=True)
+
+    # Create a new page and add tags
+    >>> page = Page(title='Using MongoEngine')
+    >>> page.tags = ['mongodb', 'mongoengine']
+    >>> page.save()
+
+    >>> Page.objects(tags='mongoengine').count()
+    >>> 1
+
+..note::
+
+   There is one caveat on Dynamic Documents: fields cannot start with `_`
+
+
 Fields
 ======
 By default, fields are not required. To make a field mandatory, set the
@@ -34,28 +62,31 @@ not provided. Default values may optionally be a callable, which will be called
 to retrieve the value (such as in the above example). The field types available
 are as follows:
 
-* :class:`~mongoengine.StringField`
-* :class:`~mongoengine.URLField`
-* :class:`~mongoengine.EmailField`
-* :class:`~mongoengine.IntField`
-* :class:`~mongoengine.FloatField`
-* :class:`~mongoengine.DecimalField`
-* :class:`~mongoengine.DateTimeField`
+* :class:`~mongoengine.BinaryField`
+* :class:`~mongoengine.BooleanField`
 * :class:`~mongoengine.ComplexDateTimeField`
-* :class:`~mongoengine.ListField`
-* :class:`~mongoengine.SortedListField`
+* :class:`~mongoengine.DateTimeField`
+* :class:`~mongoengine.DecimalField`
 * :class:`~mongoengine.DictField`
+* :class:`~mongoengine.DynamicField`
+* :class:`~mongoengine.EmailField`
+* :class:`~mongoengine.EmbeddedDocumentField`
+* :class:`~mongoengine.FileField`
+* :class:`~mongoengine.FloatField`
+* :class:`~mongoengine.GenericEmbeddedDocumentField`
+* :class:`~mongoengine.GenericReferenceField`
+* :class:`~mongoengine.GeoPointField`
+* :class:`~mongoengine.ImageField`
+* :class:`~mongoengine.IntField`
+* :class:`~mongoengine.ListField`
 * :class:`~mongoengine.MapField`
 * :class:`~mongoengine.ObjectIdField`
 * :class:`~mongoengine.ReferenceField`
-* :class:`~mongoengine.GenericReferenceField`
-* :class:`~mongoengine.EmbeddedDocumentField`
-* :class:`~mongoengine.GenericEmbeddedDocumentField`
-* :class:`~mongoengine.BooleanField`
-* :class:`~mongoengine.FileField`
-* :class:`~mongoengine.BinaryField`
-* :class:`~mongoengine.GeoPointField`
 * :class:`~mongoengine.SequenceField`
+* :class:`~mongoengine.SortedListField`
+* :class:`~mongoengine.StringField`
+* :class:`~mongoengine.URLField`
+* :class:`~mongoengine.UUIDField`
 
 Field arguments
 ---------------
@@ -70,7 +101,7 @@ arguments can be set on all fields:
 
 :attr:`required` (Default: False)
     If set to True and the field is not set on the document instance, a
-    :class:`~mongoengine.base.ValidationError` will be raised when the document is
+    :class:`~mongoengine.ValidationError` will be raised when the document is
     validated.
 
 :attr:`default` (Default: None)
@@ -107,12 +138,33 @@ arguments can be set on all fields:
     When True, use this field as a primary key for the collection.
 
 :attr:`choices` (Default: None)
-    An iterable of choices to which the value of this field should be limited.
+    An iterable (e.g. a list or tuple) of choices to which the value of this
+    field should be limited.
+
+    Can be either be a nested tuples of value (stored in mongo) and a
+    human readable key ::
+
+        SIZE = (('S', 'Small'),
+                ('M', 'Medium'),
+                ('L', 'Large'),
+                ('XL', 'Extra Large'),
+                ('XXL', 'Extra Extra Large'))
+
+
+        class Shirt(Document):
+            size = StringField(max_length=3, choices=SIZE)
+
+    Or a flat iterable just containing values ::
+
+        SIZE = ('S', 'M', 'L', 'XL', 'XXL')
+
+        class Shirt(Document):
+            size = StringField(max_length=3, choices=SIZE)
 
 :attr:`help_text` (Default: None)
     Optional help text to output with the field - used by form libraries
 
-:attr:`verbose` (Default: None)
+:attr:`verbose_name` (Default: None)
     Optional human-readable name for the field - used by form libraries
 
 
@@ -207,6 +259,35 @@ as the constructor's argument::
         content = StringField()
 
 
+.. _one-to-many-with-listfields:
+
+One to Many with ListFields
+'''''''''''''''''''''''''''
+
+If you are implementing a one to many relationship via a list of references,
+then the references are stored as DBRefs and to query you need to pass an
+instance of the object to the query::
+
+    class User(Document):
+        name = StringField()
+
+    class Page(Document):
+        content = StringField()
+        authors = ListField(ReferenceField(User))
+
+    bob = User(name="Bob Jones").save()
+    john = User(name="John Smith").save()
+
+    Page(content="Test Page", authors=[bob, john]).save()
+    Page(content="Another Page", authors=[john]).save()
+
+    # Find all pages Bob authored
+    Page.objects(authors__in=[bob])
+
+    # Find all pages that both Bob and John have authored
+    Page.objects(authors__all=[bob, john])
+
+
 Dealing with deletion of referred documents
 '''''''''''''''''''''''''''''''''''''''''''
 By default, MongoDB doesn't check the integrity of your data, so deleting
@@ -240,6 +321,10 @@ Its value can take any of the following constants:
 :const:`mongoengine.CASCADE`
   Any object containing fields that are refererring to the object being deleted
   are deleted first.
+:const:`mongoengine.PULL`
+  Removes the reference to the object (using MongoDB's "pull" operation)
+  from any object's fields of
+  :class:`~mongoengine.ListField` (:class:`~mongoengine.ReferenceField`).
 
 
 .. warning::
@@ -382,10 +467,31 @@ If a dictionary is passed then the following options are available:
 :attr:`unique` (Default: False)
     Whether the index should be sparse.
 
-.. note::
+.. warning::
 
-   Geospatial indexes will be automatically created for all
-   :class:`~mongoengine.GeoPointField`\ s
+
+   Inheritance adds extra indices.
+   If don't need inheritance for a document turn inheritance off - see :ref:`document-inheritance`.
+
+
+Geospatial indexes
+---------------------------
+Geospatial indexes will be automatically created for all
+:class:`~mongoengine.GeoPointField`\ s
+
+It is also possible to explicitly define geospatial indexes. This is
+useful if you need to define a geospatial index on a subfield of a
+:class:`~mongoengine.DictField` or a custom field that contains a
+point. To create a geospatial index you must prefix the field with the
+***** sign. ::
+
+    class Place(Document):
+        location = DictField()
+        meta = {
+            'indexes': [
+                '*location.point',
+            ],
+        }
 
 Ordering
 ========
@@ -427,8 +533,31 @@ subsequent calls to :meth:`~mongoengine.queryset.QuerySet.order_by`. ::
     first_post = BlogPost.objects.order_by("+published_date").first()
     assert first_post.title == "Blog Post #1"
 
+Shard keys
+==========
+
+If your collection is sharded, then you need to specify the shard key as a tuple,
+using the :attr:`shard_key` attribute of :attr:`-mongoengine.Document.meta`.
+This ensures that the shard key is sent with the query when calling the
+:meth:`~mongoengine.document.Document.save` or
+:meth:`~mongoengine.document.Document.update` method on an existing
+:class:`-mongoengine.Document` instance::
+
+    class LogEntry(Document):
+        machine = StringField()
+        app = StringField()
+        timestamp = DateTimeField()
+        data = StringField()
+
+        meta = {
+            'shard_key': ('machine', 'timestamp',)
+        }
+
+.. _document-inheritance:
+
 Document inheritance
 ====================
+
 To create a specialised type of a :class:`~mongoengine.Document` you have
 defined, you may subclass it and add any extra fields or methods you may need.
 As this is new class is not a direct subclass of
@@ -440,9 +569,14 @@ convenient and efficient retrieval of related documents::
     class Page(Document):
         title = StringField(max_length=200, required=True)
 
+        meta = {'allow_inheritance': True}
+
     # Also stored in the collection named 'page'
     class DatedPage(Page):
         date = DateTimeField()
+
+.. note:: From 0.7 onwards you must declare `allow_inheritance` in the document meta.
+
 
 Working with existing data
 --------------------------

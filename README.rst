@@ -2,26 +2,31 @@
 MongoEngine
 ===========
 :Info: MongoEngine is an ORM-like layer on top of PyMongo.
+:Repository: https://github.com/MongoEngine/mongoengine
 :Author: Harry Marr (http://github.com/hmarr)
+:Maintainer: Ross Lawley (http://github.com/rozza)
+
+.. image:: https://secure.travis-ci.org/MongoEngine/mongoengine.png?branch=master
+  :target: http://travis-ci.org/MongoEngine/mongoengine
 
 About
 =====
-MongoEngine is a Python Object-Document Mapper for working with MongoDB. 
-Documentation available at http://hmarr.com/mongoengine/ - there is currently 
-a `tutorial <http://hmarr.com/mongoengine/tutorial.html>`_, a `user guide 
-<http://hmarr.com/mongoengine/userguide.html>`_ and an `API reference
-<http://hmarr.com/mongoengine/apireference.html>`_.
+MongoEngine is a Python Object-Document Mapper for working with MongoDB.
+Documentation available at http://mongoengine-odm.rtfd.org - there is currently
+a `tutorial <http://readthedocs.org/docs/mongoengine-odm/en/latest/tutorial.html>`_, a `user guide
+<http://readthedocs.org/docs/mongoengine-odm/en/latest/userguide.html>`_ and an `API reference
+<http://readthedocs.org/docs/mongoengine-odm/en/latest/apireference.html>`_.
 
 Installation
 ============
 If you have `setuptools <http://peak.telecommunity.com/DevCenter/setuptools>`_
 you can use ``easy_install -U mongoengine``. Otherwise, you can download the
-source from `GitHub <http://github.com/hmarr/mongoengine>`_ and run ``python
+source from `GitHub <http://github.com/MongoEngine/mongoengine>`_ and run ``python
 setup.py install``.
 
 Dependencies
 ============
-- pymongo 1.1+
+- pymongo 2.1.1+
 - sphinx (optional - for documentation generation)
 
 Examples
@@ -84,14 +89,15 @@ the standard port, and run ``python setup.py test``.
 
 Community
 =========
-- `MongoEngine Users mailing list 
+- `MongoEngine Users mailing list
   <http://groups.google.com/group/mongoengine-users>`_
-- `MongoEngine Developers mailing list 
+- `MongoEngine Developers mailing list
   <http://groups.google.com/group/mongoengine-dev>`_
 - `#mongoengine IRC channel <irc://irc.freenode.net/mongoengine>`_
 
 Contributing
 ============
-The source is available on `GitHub <http://github.com/hmarr/mongoengine>`_ - to
+The source is available on `GitHub <http://github.com/MongoEngine/mongoengine>`_ - to
 contribute to the project, fork it on GitHub and send a pull request, all
 contributions and suggestions are welcome!
+

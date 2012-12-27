@@ -6,6 +6,7 @@ Connecting
 ==========
 
 .. autofunction:: mongoengine.connect
+.. autofunction:: mongoengine.register_connection
 
 Documents
 =========
@@ -21,7 +22,16 @@ Documents
 .. autoclass:: mongoengine.EmbeddedDocument
    :members:
 
+.. autoclass:: mongoengine.DynamicDocument
+   :members:
+
+.. autoclass:: mongoengine.DynamicEmbeddedDocument
+   :members:
+
 .. autoclass:: mongoengine.document.MapReduceDocument
+  :members:
+
+.. autoclass:: mongoengine.ValidationError
   :members:
 
 Querying
@@ -37,25 +47,28 @@ Querying
 Fields
 ======
 
-.. autoclass:: mongoengine.StringField
-.. autoclass:: mongoengine.URLField
-.. autoclass:: mongoengine.EmailField
-.. autoclass:: mongoengine.IntField
-.. autoclass:: mongoengine.FloatField
-.. autoclass:: mongoengine.DecimalField
-.. autoclass:: mongoengine.DateTimeField
+.. autoclass:: mongoengine.BinaryField
+.. autoclass:: mongoengine.BooleanField
 .. autoclass:: mongoengine.ComplexDateTimeField
-.. autoclass:: mongoengine.ListField
-.. autoclass:: mongoengine.SortedListField
+.. autoclass:: mongoengine.DateTimeField
+.. autoclass:: mongoengine.DecimalField
 .. autoclass:: mongoengine.DictField
+.. autoclass:: mongoengine.DynamicField
+.. autoclass:: mongoengine.EmailField
+.. autoclass:: mongoengine.EmbeddedDocumentField
+.. autoclass:: mongoengine.FileField
+.. autoclass:: mongoengine.FloatField
+.. autoclass:: mongoengine.GenericEmbeddedDocumentField
+.. autoclass:: mongoengine.GenericReferenceField
+.. autoclass:: mongoengine.GeoPointField
+.. autoclass:: mongoengine.ImageField
+.. autoclass:: mongoengine.IntField
+.. autoclass:: mongoengine.ListField
 .. autoclass:: mongoengine.MapField
 .. autoclass:: mongoengine.ObjectIdField
 .. autoclass:: mongoengine.ReferenceField
-.. autoclass:: mongoengine.GenericReferenceField
-.. autoclass:: mongoengine.EmbeddedDocumentField
-.. autoclass:: mongoengine.GenericEmbeddedDocumentField
-.. autoclass:: mongoengine.BooleanField
-.. autoclass:: mongoengine.FileField
-.. autoclass:: mongoengine.BinaryField
-.. autoclass:: mongoengine.GeoPointField
 .. autoclass:: mongoengine.SequenceField
+.. autoclass:: mongoengine.SortedListField
+.. autoclass:: mongoengine.StringField
+.. autoclass:: mongoengine.URLField
+.. autoclass:: mongoengine.UUIDField
